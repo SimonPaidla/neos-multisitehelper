@@ -13,9 +13,14 @@ namespace Flownative\Neos\MultisiteHelper;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider as FlowPersistedUsernamePasswordProvider;
 use Neos\Flow\Security\Authentication\TokenInterface;
+use Neos\Flow\Security\Exception;
+use Neos\Flow\Security\Exception\InvalidAuthenticationStatusException;
+use Neos\Flow\Security\Exception\NoSuchRoleException;
+use Neos\Flow\Security\Exception\UnsupportedAuthenticationTokenException;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Utility\ObjectAccess;
@@ -56,8 +61,13 @@ class PersistedUsernamePasswordProvider extends FlowPersistedUsernamePasswordPro
      *
      * @param TokenInterface $authenticationToken The token to be authenticated
      * @return void
+     * @throws IllegalObjectTypeException
+     * @throws Exception
+     * @throws InvalidAuthenticationStatusException
+     * @throws NoSuchRoleException
+     * @throws UnsupportedAuthenticationTokenException
      */
-    public function authenticate(TokenInterface $authenticationToken)
+    public function authenticate(TokenInterface $authenticationToken): void
     {
         parent::authenticate($authenticationToken);
         if (!$authenticationToken->getAuthenticationStatus() === TokenInterface::AUTHENTICATION_SUCCESSFUL) {
@@ -90,7 +100,7 @@ class PersistedUsernamePasswordProvider extends FlowPersistedUsernamePasswordPro
      * @param TokenInterface $authenticationToken
      * @return void
      */
-    protected function rollback(TokenInterface $authenticationToken)
+    protected function rollback(TokenInterface $authenticationToken): void
     {
         $authenticationToken->setAuthenticationStatus(TokenInterface::WRONG_CREDENTIALS);
         ObjectAccess::setProperty($this->authenticationManager, 'isAuthenticated', false, true);
