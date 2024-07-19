@@ -13,13 +13,13 @@ namespace Flownative\Neos\MultisiteHelper;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Log\SecurityLoggerInterface;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Flow\Security\Authentication\Provider\PersistedUsernamePasswordProvider as FlowPersistedUsernamePasswordProvider;
 use Neos\Flow\Security\Authentication\TokenInterface;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Utility\ObjectAccess;
+use Psr\Log\LoggerInterface;
 
 /**
  * A custom site aware authentication provider extending the existing persisted username password provider
@@ -45,8 +45,8 @@ class PersistedUsernamePasswordProvider extends FlowPersistedUsernamePasswordPro
     protected $policyService;
 
     /**
-     * @Flow\Inject
-     * @var SecurityLoggerInterface
+     * @Flow\Inject(name="Neos.Flow:SecurityLogger")
+     * @var LoggerInterface
      */
     protected $securityLogger;
 
